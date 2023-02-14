@@ -1,5 +1,5 @@
 # ExpensesApp
-- ASP.NET Core MVC App
+- ASP.NET Core MVC Web App
 - Created two models(Category & Transaction)
 - Ran add-migration and update-database in package manager console
 - Created two controllers with views(CategoryController & TransactionController) using entity framework
