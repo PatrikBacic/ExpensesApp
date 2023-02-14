@@ -1,0 +1,77 @@
+﻿@model IEnumerable<ExpensesApp.Models.Transaction>
+
+@{
+    ViewData["Title"] = "Transactions";
+}
+
+<h1>List of transactions</h1>
+
+<p>
+    <a asp-action="Create">Create New Transaction</a>
+</p>
+<table class="table">
+    <thead>
+        <tr style="background-color:silver">
+            <th>
+                @Html.DisplayNameFor(model => model.Category)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Amount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateTime)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category.Title)
+            </td>
+            <td>
+                @{ 
+                    if(item.Category.Type == "Expense")
+                    {
+                        <p style="color: red">-@Html.DisplayFor(modelItem => item.Amount)&euro;</p>
+                    }
+                    else
+                    {
+                        <p style="color:forestgreen">@Html.DisplayFor(modelItem => item.Amount)&euro;</p>
+                    }
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateTime)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.TransactionId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.TransactionId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.TransactionId">Delete</a>
+            </td>
+        </tr>
+}
+
+    </tbody>
+    <tfoot>
+        <tr>
+            <td style="border-top:2px solid black"><strong>Total Income: </strong></td>
+            <td colspan="4" align="left" style="color:forestgreen;border-top:2px solid black">@ViewBag.totalIncome&euro;</td>
+        </tr>
+        <tr>
+            <td><strong>Total Expenses: </strong></td>
+            <td colspan="4" align="left" style="color:red">-@ViewBag.totalExpense&euro;</td>
+        </tr>
+        <tr>
+            <td style="border-bottom:2px solid black"><strong>Total Balance: </strong></td>
+            <td colspan="4" align="left" style="border-bottom:2px solid black"><strong> @ViewBag.Balance&euro;</strong></td>
+        </tr>
+    </tfoot>
+</table>

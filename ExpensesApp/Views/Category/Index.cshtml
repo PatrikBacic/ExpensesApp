@@ -1,0 +1,55 @@
+﻿@model IEnumerable<ExpensesApp.Models.Category>
+
+@{
+    ViewData["Title"] = "Categories";
+}
+<link rel="stylesheet" href="~/css/site.css" />
+<h1>List of categories</h1>
+
+<p>
+    <a asp-action="Create">Create New Category</a>
+</p>
+
+
+<table class="table">
+    <thead>
+        
+        <tr style="background-color:silver">
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Type)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                
+                @{
+                if (item.Type == "Income")
+                {
+                    <p style="color:forestgreen">@Html.DisplayFor(modelItem => item.Type)</p>
+                }
+                else
+                {
+                    <p style="color:red">@Html.DisplayFor(modelItem => item.Type)</p>
+                }
+                }
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.CategoryId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.CategoryId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.CategoryId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
