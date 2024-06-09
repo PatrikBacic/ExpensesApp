@@ -2,76 +2,128 @@
 
 @{
     ViewData["Title"] = "Transactions";
+    ViewData["PageActionText"] = "+ New Transaction";
+    ViewData["PageActionUrl"] = "/Transaction/CreateOrEdit";
 }
 
-<h1>List of transactions</h1>
+<style>
+    h1 {
+        text-align: center;
+        font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    }
 
-<p>
-    <a asp-action="Create">Create New Transaction</a>
-</p>
-<table class="table">
-    <thead>
-        <tr style="background-color:silver">
-            <th>
-                @Html.DisplayNameFor(model => model.Category)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Amount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DateTime)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category.Title)
-            </td>
-            <td>
-                @{ 
-                    if(item.Category.Type == "Expense")
-                    {
-                        <p style="color: red">-@Html.DisplayFor(modelItem => item.Amount)&euro;</p>
-                    }
-                    else
-                    {
-                        <p style="color:forestgreen">@Html.DisplayFor(modelItem => item.Amount)&euro;</p>
-                    }
-                }
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateTime)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.TransactionId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.TransactionId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.TransactionId">Delete</a>
-            </td>
-        </tr>
-}
+    
 
-    </tbody>
-    <tfoot>
-        <tr>
-            <td style="border-top:2px solid black"><strong>Total Income: </strong></td>
-            <td colspan="4" align="left" style="color:forestgreen;border-top:2px solid black">@ViewBag.totalIncome&euro;</td>
-        </tr>
-        <tr>
-            <td><strong>Total Expenses: </strong></td>
-            <td colspan="4" align="left" style="color:red">-@ViewBag.totalExpense&euro;</td>
-        </tr>
-        <tr>
-            <td style="border-bottom:2px solid black"><strong>Total Balance: </strong></td>
-            <td colspan="4" align="left" style="border-bottom:2px solid black"><strong> @ViewBag.Balance&euro;</strong></td>
-        </tr>
-    </tfoot>
-</table>
+    .col-md-7 {
+        margin-left: 20%;
+    }
+
+    .e-grid {
+        border: 0;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgb(128 128 128);
+    }
+
+        .e-grid .e-gridcontent, .e-grid .e-table {
+            background-color: aliceblue;
+        }
+
+        .e-grid .e-gridheader {
+            border: 5px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            padding: 10px;
+            background-color: lightskyblue;
+            color: black;
+        }
+
+            .e-grid .e-gridheader .e-headercell {
+                background-color: whitesmoke;
+            }
+
+        .e-grid .e-gridpager {
+            background-color: lightskyblue;
+        }
+
+        .e-grid .e-pagercontainer {
+            border: none;
+            background-color: lightskyblue;
+        }
+
+        .e-grid .e-content table {
+            padding: 0px 10px;
+        }
+
+    .e-pagercontainer .e-icons {
+        background-color: whitesmoke;
+        border: none !important;
+    }
+
+    .e-pager .e-numericitem {
+        color: black;
+        background-color: whitesmoke;
+        padding: 15px !important;
+    }
+
+        .e-pager .e-numericitem:not(.e-currentitem) {
+            border: none !important;
+        }
+
+        .e-pager .e-numericitem:hover {
+            color: black;
+            background-color: whitesmoke;
+        }
+
+        .e-pager .e-numericitem.e-currentitem {
+            color: black;
+            border: none !important;
+            background-color: whitesmoke;
+        }
+
+    .e-pager div.e-icons:not(.e-disable) {
+        color: black;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .e-grid .e-pager {
+        padding: 10px;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+    }
+</style>
+
+<br />
+
+<div class="row">
+    <div class="col-md-7">
+        <ejs-grid id="transactions" dataSource="@Model" gridLines="None" allowSorting="true" allowPaging="true">
+            <e-grid-pagesettings pageSize="5"></e-grid-pagesettings>
+            <e-grid-columns>
+                <e-grid-column headerText="Transaction" field="CategoryTitle" width="200px"></e-grid-column>
+                <e-grid-column headerText="Amount" field="FormattedAmount"></e-grid-column>
+                <e-grid-column headerText="Date" field="DateTime" format="dd.MM.yyyy" width="150px"></e-grid-column>
+                <e-grid-column headerText="Actions" template="#actionColumnTemplate"></e-grid-column>
+            </e-grid-columns>
+        </ejs-grid>
+    </div>
+</div>
+
+<script id="actionColumnTemplate" type="text/x-template">
+    <div class="d-flex flex-row justify-content-start">
+        <a class="btn btn-sm" href="/Transaction/CreateOrEdit/${TransactionId}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+            </svg>
+        </a>
+        <form action="/Transaction/Delete/${TransactionId}" method="post">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-sm btn-link no-a-decoration" onclick="return confirm(&quot;Do you wish to delete this transaction?&quot;)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="red" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                    <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                </svg>
+            </button>
+        </form>
+    </div>
+</script>

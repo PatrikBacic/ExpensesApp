@@ -1,0 +1,104 @@
+﻿@model ExpensesApp.Models.Category
+
+@{
+    ViewData["Title"] = Model.CategoryId == 0 ? "Create a new category" : "Edit category";
+}
+<style>
+    h1{
+        text-align:center;
+    }
+    .row{
+        padding-top:2%;
+        padding-bottom:2%;
+        margin-left:15%;
+        width:70%;
+        display:flex;
+        flex-direction:row;
+        justify-content:space-evenly;
+        border: 2px solid gray;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgb(128 128 128);
+    }
+
+    .col-md-4{
+        width:100%;
+        display:flex;
+        flex-direction:row;
+    }
+
+    .form-group{
+        width:100%;
+        margin-top:15px;
+        margin-bottom: 15px;
+    }
+
+    .pic {
+        display:flex;
+        flex-direction:row;
+        border-radius:50%;
+        overflow:hidden;
+        box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    .radio-group {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .e-btn-group.custom-rbt-group {
+        width: 100%;
+    }
+
+        .e-btn-group.custom-rbt-group .e-btn {
+            width: 50%;
+        }
+
+    .custom-rbt-group label.e-btn {
+        box-shadow: none !important;
+        border: 1px solid #fff;
+        background-color: whitesmoke;
+        color: black;
+    }
+
+    .e-btn-group.custom-rbt-group input:checked + label.e-btn {
+        background-color: dodgerblue;
+        color: #212b36;
+        border: 1px solid #fff;
+    }
+</style>
+
+<br />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateOrEdit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" name="CategoryId" value="@Model.CategoryId" />
+            <div class="form-group">
+                <ejs-textbox id="title" placeholder="Title" ejs-for="Title" floatLabelType="Always"></ejs-textbox>
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class='e-btn-group custom-rbt-group'>
+                    <input type="radio" id="radioleft" name="Type" value="Expense" checked="@(Model.Type=="Expense")" />
+                    <label class="e-btn" for="radioleft">Expense</label>
+                    <input type="radio" id="radiomiddle" name="Type" value="Income" checked="@(Model.Type=="Income")" />
+                    <label class="e-btn" for="radiomiddle">Income</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <ejs-button id="submit" type="submit" content="Create"></ejs-button>
+            </div>
+            <br />
+            <div class="form-group">
+                <a asp-action="Index">Back to Category list</a>
+            </div>
+        </form>
+    </div>
+    <div class="pic">
+        <img src="~/Images/categories.jpg" />
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

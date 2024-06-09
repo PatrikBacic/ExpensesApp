@@ -1,0 +1,87 @@
+﻿@model ExpensesApp.Models.Transaction
+
+@{
+    ViewData["Title"] = Model.TransactionId == 0 ? "Create a new transaction" : "Edit transaction";
+}
+<style>
+    h1 {
+        text-align:center;
+    }
+
+    .row {
+        padding-top: 2%;
+        padding-bottom: 2%;
+        margin-left: 15%;
+        width: 70%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        border: 2px solid gray;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgb(128 128 128);
+    }
+
+    .col-md-4 {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+    }
+
+    .form-group {
+        width: 100%;
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+
+    .pic {
+        margin-top: 10%;
+        margin-bottom: 10%;
+        display: flex;
+        flex-direction: row;
+        border-radius: 50%;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+</style>
+
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateOrEdit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" name="TransactionId" value="@Model.TransactionId" />
+            <div class="form-group">
+                <ejs-dropdownlist id="ddlCategory" ejs-for="CategoryId" dataSource="@ViewBag.Categories" placeholder="Category" allowFiltering="true">
+                    <e-dropdownlist-fields value="CategoryId" text="Title"></e-dropdownlist-fields>
+                </ejs-dropdownlist>
+                <span asp-validation-for="CategoryId" class="text-danger fs-6" ></span>
+            </div>
+            <div class="form-group">
+                <ejs-numerictextbox id="amount" min=0 Type="text" placeholder="Amount" decimals="2" floatLabelType="Always" format="'€'0.00"></ejs-numerictextbox>
+                <span asp-validation-for="Amount" class="text-danger fs-6"></span>
+            </div>
+            <div class="form-group">
+                <ejs-textbox id="description" placeholder="Description" ejs-for="Description" floatLabelType="Always" multiline="true"></ejs-textbox>
+            </div>
+            <div class="form-group">
+                <ejs-datepicker id="date" ejs-for="DateTime" placeholder="Date" floatLabelType="Always" format="yyyy.MM.dd">
+                </ejs-datepicker>
+            </div>
+            <div class="form-group">
+                <ejs-button id="submit" type="submit" content="Create"></ejs-button>
+            </div>
+            <div>
+                <a asp-action="Index">Back to Transaction list</a>
+            </div>
+        </form>
+    </div>
+    <div class="pic">
+        <img src="~/Images/expenses.png" />
+    </div>
+</div>
+
+
+
+@*@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}*@

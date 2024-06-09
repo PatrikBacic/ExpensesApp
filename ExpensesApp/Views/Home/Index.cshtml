@@ -1,13 +1,46 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+//ViewData["Title"] = "Home Page";
 }
 
+<style>
+    h1{
+        margin-bottom:50px;
+        font-family:'Arial Rounded MT'
+    }
+
+    p {
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        font-size: 20px;
+        text-align: center;
+    }
+
+    strong {
+        transition: transform 0.3s ease, color 0.3s ease;
+    }
+
+    strong:hover {
+        color: #007bff;
+        transform: scale(1.1);
+        transition-delay: 0.1s;
+    }
+</style>
+
 <div class="text-center">
-    <h1 class="display-4">Welcome to ExpensesApp</h1>
-    <p style="font-size:20px">
-        To use the features of the ExpensesApp please <strong>Register</strong> and <strong>Login</strong> first.
-        First of, start by making a couple <strong>Categories</strong> otherwise you won't be able to create any <strong>Transactions.</strong>
-        After you made a couple Categories it's time to start creating some <strong>Transactions</strong>, insert the title, amount and date.
+    <h1>Welcome to <strong>ExpensesApp</strong></h1>
+    <ejs-stepper id="stepper">
+        <e-stepper-steps>
+            <e-stepper-step label="Register"></e-stepper-step>
+            <e-stepper-step label="Login"></e-stepper-step>
+            <e-stepper-step label="Categories"></e-stepper-step>
+            <e-stepper-step label="Transactions"></e-stepper-step>
+            <e-stepper-step label="Statistics"></e-stepper-step>
+        </e-stepper-steps>
+    </ejs-stepper>
+    <br />
+    <p>
+        Firstly <strong>Register</strong> or <strong>Login</strong> to use the app.
+        Next step is to create a couple of <strong>Categories</strong>(i.e. food, paycheck, rent, etc.).
+        After that, create <strong>Transactions</strong> for those categories, providing the amount, description and date, they will be calculated after creation inside of <strong>Statistics</strong>.
     </p>
+    <img src="~/Images/pig.png" />
 </div>
-<body style="background-repeat:no-repeat;background-position:center;background-image:url(../Images/pig.png)"></body>

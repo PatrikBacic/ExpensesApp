@@ -1,10 +1,25 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
 }
-<h1>@ViewData["Title"]</h1>
-
+<style>
+    h1 {
+        text-align: center;
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    }
+    h5 {
+        text-align: center;
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    }
+    .pic {
+        display: flex;
+        justify-content:space-evenly;
+    }
+</style>
 <h5>If you wish to change some of your account settings press on your Email next to the Logout button.</h5>
-<body style="background-attachment:fixed;background-position:center;background-repeat:no-repeat;background-image:url(../Images/lock.png)">
-
+<body>
+    <br />
+    <div class="pic">
+        <img src="~/Images/lock.png" />
+    </div>
 </body>
 

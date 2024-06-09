@@ -1,0 +1,161 @@
+﻿@*
+*@
+@{
+    ViewData["Title"] = "Statistics";
+    var selectedYear = ViewBag.SelectedYear;
+    var selectedMonth = ViewBag.SelectedMonth.ToString();
+}
+<style>
+    h1 {
+        text-align: center;
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    }
+    h2 {
+        text-align: center;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
+    h3 {
+        text-align: center;
+        font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
+
+    .current-month {
+        font-weight: bold;
+        color: red;
+    }
+    
+    .income {
+        color: #21d21e;
+    }
+
+    .statistics {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .widgets {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .widget {
+        flex: 1;
+        background-color: #f4f4f4;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgb(128 128 128);
+    }
+
+        .widget + .widget {
+            margin-left: 20px;
+        }
+
+        .widget h2 {
+            margin-top: 0;
+        }
+
+    .charts {
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgb(128 128 128);
+        background-color: lightskyblue;
+    }
+</style>
+
+<div class="statistics">
+    <div class="widgets">
+        <div class="widget">
+            <h2>Income <svg xmlns="http://www.w3.org/2000/svg" height="35" width="33" viewBox="0 0 320 512"><path fill="#21d21e" d="M48.1 240c-.1 2.7-.1 5.3-.1 8v16c0 2.7 0 5.3 .1 8H32c-17.7 0-32 14.3-32 32s14.3 32 32 32H60.3C89.9 419.9 170 480 264 480h24c17.7 0 32-14.3 32-32s-14.3-32-32-32H264c-57.9 0-108.2-32.4-133.9-80H256c17.7 0 32-14.3 32-32s-14.3-32-32-32H112.2c-.1-2.6-.2-5.3-.2-8V248c0-2.7 .1-5.4 .2-8H256c17.7 0 32-14.3 32-32s-14.3-32-32-32H130.1c25.7-47.6 76-80 133.9-80h24c17.7 0 32-14.3 32-32s-14.3-32-32-32H264C170 32 89.9 92.1 60.3 176H32c-17.7 0-32 14.3-32 32s14.3 32 32 32H48.1z" /></svg></h2>
+            <hr />
+            <h2 class="income">@ViewBag.TotalIncome</h2>
+        </div>
+        <div class="widget">
+            <h2>Expense <svg xmlns="http://www.w3.org/2000/svg" height="35" width="33" viewBox="0 0 320 512"><path fill="#ff0000" d="M48.1 240c-.1 2.7-.1 5.3-.1 8v16c0 2.7 0 5.3 .1 8H32c-17.7 0-32 14.3-32 32s14.3 32 32 32H60.3C89.9 419.9 170 480 264 480h24c17.7 0 32-14.3 32-32s-14.3-32-32-32H264c-57.9 0-108.2-32.4-133.9-80H256c17.7 0 32-14.3 32-32s-14.3-32-32-32H112.2c-.1-2.6-.2-5.3-.2-8V248c0-2.7 .1-5.4 .2-8H256c17.7 0 32-14.3 32-32s-14.3-32-32-32H130.1c25.7-47.6 76-80 133.9-80h24c17.7 0 32-14.3 32-32s-14.3-32-32-32H264C170 32 89.9 92.1 60.3 176H32c-17.7 0-32 14.3-32 32s14.3 32 32 32H48.1z" /></svg></h2>
+            <hr />
+            <h2 class="expense">@ViewBag.TotalExpense</h2>
+        </div>
+        <div class="widget">
+            <h2>Balance <svg xmlns="http://www.w3.org/2000/svg" height="35" width="33" viewBox="0 0 512 512"><path fill="#705151" d="M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V192c0-35.3-28.7-64-64-64H80c-8.8 0-16-7.2-16-16s7.2-16 16-16H448c17.7 0 32-14.3 32-32s-14.3-32-32-32H64zM416 272a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" /></svg></h2>
+            <hr />
+            <h2 class="balance">@ViewBag.Balance</h2>
+
+        </div>
+    </div>
+    
+    <form method="get" asp-action="Index">
+        <div class="widgets">
+            <div class="widget">
+                <ejs-dropdownlist id="selectedYear" name="selectedYear" dataSource="@ViewBag.Years" placeholder="Select Year" value="@selectedYear">
+                    <e-dropdownlist-fields value="Value" text="Text"></e-dropdownlist-fields>
+                </ejs-dropdownlist>
+            </div>
+            <div class="widget">
+                <ejs-dropdownlist id="selectedMonth" name="selectedMonth" dataSource="@ViewBag.Months" placeholder="Select Month" value="@selectedMonth">
+                    <e-dropdownlist-fields value="Value" text="Text"></e-dropdownlist-fields>
+                </ejs-dropdownlist>
+            </div>
+            <div class="widget">
+                <ejs-button id="submit" type="submit" content="Update" style="margin: auto; display: block; width: 120px; height: 40px;"></ejs-button>
+            </div>
+        </div>
+    </form>
+    <div class="charts">
+        <h3>Monthly Expenses</h3>
+        <ejs-circularchart3d id="container" tilt="-45" background="whitesmoke" enableAnimation="true">
+            <e-circularchart3d-legendsettings visible="true" position="@Syncfusion.EJ2.Charts.LegendPosition.Bottom">
+            </e-circularchart3d-legendsettings>
+            <e-circularchart3d-tooltipsettings enable="true">
+            </e-circularchart3d-tooltipsettings>
+            <e-circularchart3d-series-collection>
+                <e-circularchart3d-series dataSource="@ViewBag.CircularChartData" xName="categoryTitle" yName="amount">
+                    <e-circularchart3d-series-datalabel visible="true" position="@Syncfusion.EJ2.Charts.CircularChart3DLabelPosition.Outside" name="formattedAmount">
+                        <e-font fontWeight="500" color="red"></e-font>
+                        <e-connectorstyle length="60px"></e-connectorstyle>
+                    </e-circularchart3d-series-datalabel>
+                </e-circularchart3d-series>
+            </e-circularchart3d-series-collection>
+        </ejs-circularchart3d>
+    </div>
+    <br />
+    <div class="charts">
+        <h3>Income vs Expense during the month</h3>
+        <ejs-chart3d id="chart3d" rotation="0" tilt="0" depth="100" background="whitesmoke" wallColor="darkgray" palettes=@(new string[] { "#21d21e", "red"})>
+            <e-chart3d-primaryxaxis valueType=Category></e-chart3d-primaryxaxis>
+            <e-chart3d-primaryyaxis></e-chart3d-primaryyaxis>
+            <e-chart3d-tooltipsettings enable="true"></e-chart3d-tooltipsettings>
+            <e-chart3d-series-collection>
+                <e-chart3d-series dataSource="@ViewBag.Chart3dData" xName="day" yName="income" name="Income" type="@Syncfusion.EJ2.Charts.Chart3DSeriesType.Column">
+                </e-chart3d-series>
+                <e-chart3d-series dataSource="@ViewBag.Chart3dData" xName="day" yName="expense" name="Expense" type="@Syncfusion.EJ2.Charts.Chart3DSeriesType.Column">
+                </e-chart3d-series>
+            </e-chart3d-series-collection>
+        </ejs-chart3d>
+    </div>
+    <br />
+    <div class="charts">
+        <h3>Balance throughout the year</h3>
+        <ejs-chart id="spline-chart" background="whitesmoke">
+            <e-chart-primaryxaxis valueType="Category">
+                <e-majorgridlines width="0"></e-majorgridlines>
+                <e-majorticklines width="0"></e-majorticklines>
+            </e-chart-primaryxaxis>
+            <e-chart-primaryyaxis>
+                <e-majorgridlines width="1" color="darkgray"></e-majorgridlines>
+                <e-majorticklines width="0"></e-majorticklines>
+                <e-linestyle width="0"></e-linestyle>
+            </e-chart-primaryyaxis>
+            <e-chart-chartarea>
+                <e-chartarea-border width="0"></e-chartarea-border>
+            </e-chart-chartarea>
+            <e-series-collection>
+                <e-series dataSource="@ViewBag.CumulativeBalanceData" xName="month" width="3"
+                          yName="balance" name="Balance" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Spline"></e-series>
+            </e-series-collection>
+            <e-chart-legendsettings position="Bottom" alignment="Center" toggleVisibility="false">
+                <e-legendsettings-textstyle size="1rem"></e-legendsettings-textstyle>
+            </e-chart-legendsettings>
+            <e-chart-tooltipsettings enable shared></e-chart-tooltipsettings>
+        </ejs-chart>
+    </div>
+</div>

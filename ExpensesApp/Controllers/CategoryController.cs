@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using ExpensesApp.Data;
 using ExpensesApp.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace ExpensesApp.Controllers
 {
@@ -15,40 +17,43 @@ namespace ExpensesApp.Controllers
     public class CategoryController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public CategoryController(ApplicationDbContext context)
+        public CategoryController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            DeleteOldCategories().Wait();
+            _userManager = userManager;
         }
 
         // GET: Category
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Categories.ToListAsync());
-        }
-
-        // GET: Category/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
             {
-                return NotFound();
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            var category = await _context.Categories
-                .FirstOrDefaultAsync(m => m.CategoryId == id);
-            if (category == null)
-            {
-                return NotFound();
-            }
+            var categories = await _context.Categories
+                .Where(c => c.UserId == user.Id)
+                .ToListAsync();
 
-            return View(category);
+            return View(categories);
         }
 
         // GET: Category/Create
-        public IActionResult Create()
+        public IActionResult CreateOrEdit(int id = 0)
         {
-            return View();
+            if (id == 0)
+            {
+                return View(new Category());
+            }
+            else
+            {
+                var category = _context.Categories.Find(id);
+                return View(category);
+            }
         }
 
         // POST: Category/Create
@@ -56,83 +61,47 @@ namespace ExpensesApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CategoryId,Title,Type")] Category category)
+        public async Task<IActionResult> CreateOrEdit([Bind("CategoryId,Title,Type")] Category category)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(category);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(category);
-        }
+                // Check if category with the same title already exists for the current user
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var existingCategory = await _context.Categories
+                    .FirstOrDefaultAsync(c => c.Title == category.Title && c.UserId == userId);
 
-        // GET: Category/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null)
-            {
-                return NotFound();
-            }
-            return View(category);
-        }
-
-        // POST: Category/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CategoryId,Title,Type")] Category category)
-        {
-            if (id != category.CategoryId)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                if (existingCategory != null && existingCategory.CategoryId != category.CategoryId)
                 {
-                    _context.Update(category);
-                    await _context.SaveChangesAsync();
+                    // Category with the same title exists, add a model state error
+                    ModelState.AddModelError("Title", "A category with this title already exists.");
+                    return View(category);
                 }
-                catch (DbUpdateConcurrencyException)
+
+                if (category.CategoryId == 0)
                 {
-                    if (!CategoryExists(category.CategoryId))
+                    // New category creation
+                    category.UserId = userId;
+                    _context.Add(category);
+                }
+                else
+                {
+                    // Update existing category
+                    var existingCategoryToUpdate = await _context.Categories.FindAsync(category.CategoryId);
+                    if (existingCategoryToUpdate != null)
                     {
-                        return NotFound();
+                        existingCategoryToUpdate.Title = category.Title;
+                        existingCategoryToUpdate.Type = category.Type;
+                        _context.Update(existingCategoryToUpdate);
                     }
                     else
                     {
-                        throw;
+                        return NotFound();
                     }
                 }
+
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(category);
-        }
-
-        // GET: Category/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var category = await _context.Categories
-                .FirstOrDefaultAsync(m => m.CategoryId == id);
-            if (category == null)
-            {
-                return NotFound();
-            }
-
             return View(category);
         }
 
@@ -141,15 +110,25 @@ namespace ExpensesApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (_context.Categories == null)
+            {
+                return Problem("Entity set 'ApplicationDbContext.Categories'  is null.");
+            }
             var category = await _context.Categories.FindAsync(id);
-            _context.Categories.Remove(category);
+            if (category != null)
+            {
+                _context.Categories.Remove(category);
+            }
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CategoryExists(int id)
+        public async Task DeleteOldCategories()
         {
-            return _context.Categories.Any(e => e.CategoryId == id);
+            var oldCategories = _context.Categories.Where(c => c.UserId == null).ToList();
+            _context.Categories.RemoveRange(oldCategories);
+            await _context.SaveChangesAsync();
         }
     }
 }

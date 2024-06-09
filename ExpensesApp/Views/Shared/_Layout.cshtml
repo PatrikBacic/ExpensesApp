@@ -5,13 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - ExpensesApp</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/25.1.35/material.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <script src="https://cdn.syncfusion.com/ej2/25.1.35/dist/ej2.min.js"></script>
+    
+    <style>
+        .navbar.navbar-expand-sm.navbar-toggleable-sm.navbar-light.bg-light.border-bottom.box-shadow.mb-3 .navbar-nav .nav-link {
+            transition: transform 0.3s ease;
+        }
+
+            .navbar.navbar-expand-sm.navbar-toggleable-sm.navbar-light.bg-light.border-bottom.box-shadow.mb-3 .navbar-nav .nav-link:hover {
+                color: #007bff !important;
+                transform: scale(1.1);
+            }
+    </style>
 </head>
+
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-light border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ExpensesApp</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/favicon-32x32.png"> ExpensesApp</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -30,6 +44,9 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Transaction" asp-action="Index">Transactions</a>
                         </li>
+                        <li>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Statistics" asp-action="Index">Statistics</a>
+                        </li>
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
@@ -38,18 +55,48 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            <div>
+                <div>
+                    <div>
+                        <div>
+                            <div>
+                                @{
+                                    var currentPath = Context.Request.Path.ToString();
+                                }
+                                @if (currentPath != "/Identity/Account/Register" && currentPath != "/Identity/Account/Login")
+                                {
+                                    <h1 class="font-weight-bold">@ViewData["Title"]</h1>
+                                }
+                            </div>
+                            <div style="text-align:center">
+                                <br />
+                                @if(ViewData["PageActionText"] != null)
+                                {
+                                    <a class="btn btn-success" href="@ViewData["PageActionUrl"]">
+                                        @ViewData["PageActionText"]
+                                    </a>
+                                }
+                                
+                            </div>
+                        </div>
+                        @*breadcrumb*@
+                    </div>
+                </div>
+
+            </div>
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer text-muted" style="text-align:center">
         <div class="container">
-            &copy; 2023 - ExpensesApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2024 - ExpensesApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    <ejs-scripts></ejs-scripts>
 </body>
 </html>
