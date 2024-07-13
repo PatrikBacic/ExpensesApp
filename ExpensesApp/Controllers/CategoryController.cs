@@ -22,7 +22,6 @@ namespace ExpensesApp.Controllers
         public CategoryController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
-            DeleteOldCategories().Wait();
             _userManager = userManager;
         }
 
@@ -122,13 +121,6 @@ namespace ExpensesApp.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        public async Task DeleteOldCategories()
-        {
-            var oldCategories = _context.Categories.Where(c => c.UserId == null).ToList();
-            _context.Categories.RemoveRange(oldCategories);
-            await _context.SaveChangesAsync();
         }
     }
 }
