@@ -42,36 +42,36 @@ namespace ExpensesApp.Controllers
         .ToListAsync();
 
     // Total Income for the selected month
-    int TotalMonthlyIncome = SelectedTransactions
+    decimal TotalMonthlyIncome = SelectedTransactions
         .Where(i => i.Category.Type == "Income")
         .Sum(j => j.Amount);
-    ViewBag.TotalIncome = TotalMonthlyIncome.ToString("'€'0");
+    ViewBag.TotalIncome = string.Format("€{0:F2}", TotalMonthlyIncome);
 
-    // Total Expense for the selected month
-    int TotalMonthlyExpense = SelectedTransactions
+            // Total Expense for the selected month
+            decimal TotalMonthlyExpense = SelectedTransactions
         .Where(i => i.Category.Type == "Expense")
         .Sum(j => j.Amount);
-    ViewBag.TotalExpense = TotalMonthlyExpense.ToString("'€'0");
+    ViewBag.TotalExpense = string.Format("€{0:F2}", TotalMonthlyExpense);
 
-    // Cumulative Transactions for all time for the current user
-    List<Transaction> CumulativeTransactions = await _context.Transactions
+            // Cumulative Transactions for all time for the current user
+            List<Transaction> CumulativeTransactions = await _context.Transactions
         .Include(x => x.Category)
         .Where(t => t.UserId == userId)
         .ToListAsync();
 
     // Total Cumulative Income
-    int TotalCumulativeIncome = CumulativeTransactions
+    decimal TotalCumulativeIncome = CumulativeTransactions
         .Where(i => i.Category.Type == "Income")
         .Sum(j => j.Amount);
 
     // Total Cumulative Expense
-    int TotalCumulativeExpense = CumulativeTransactions
+    decimal TotalCumulativeExpense = CumulativeTransactions
         .Where(i => i.Category.Type == "Expense")
         .Sum(j => j.Amount);
 
     // Balance (all-time)
-    int Balance = TotalCumulativeIncome - TotalCumulativeExpense;
-    ViewBag.Balance = Balance.ToString("'€'0");
+    decimal Balance = TotalCumulativeIncome - TotalCumulativeExpense;
+            ViewBag.Balance = string.Format("€{0:F2}", Balance);
 
     // 3D Pie chart
     ViewBag.CircularChartData = SelectedTransactions
@@ -81,7 +81,7 @@ namespace ExpensesApp.Controllers
         {
             categoryTitle = k.First().Category.Title,
             amount = k.Sum(j => j.Amount),
-            formattedAmount = k.Sum(j => j.Amount).ToString("'€'0"),
+            formattedAmount = k.Sum(j => j.Amount).ToString("€0.00"),
         })
         .OrderByDescending(l => l.amount)
         .ToList();
@@ -137,7 +137,7 @@ namespace ExpensesApp.Controllers
 
     // Cumulative balance for each month of the current year
     var cumulativeBalanceData = new List<SplineChartData>();
-    int cumulativeBalance = 0;
+    decimal cumulativeBalance = 0;
 
     // Only calculate up to the current month if the selected year is the current year
     int lastMonth = (year == DateTime.Now.Year) ? DateTime.Now.Month : 12;
@@ -148,11 +148,11 @@ namespace ExpensesApp.Controllers
             .Where(t => t.DateTime.Year == year && t.DateTime.Month == mth)
             .ToList();
 
-        int monthlyIncome = monthlyTransactions
+        decimal monthlyIncome = monthlyTransactions
             .Where(t => t.Category.Type == "Income")
             .Sum(t => t.Amount);
 
-        int monthlyExpense = monthlyTransactions
+        decimal monthlyExpense = monthlyTransactions
             .Where(t => t.Category.Type == "Expense")
             .Sum(t => t.Amount);
 
@@ -171,14 +171,14 @@ namespace ExpensesApp.Controllers
         public class SplineChartData
         {
             public string month { get; set; }
-            public int balance { get; set; }
+            public decimal balance { get; set; }
         }
 
         public class Chart3dData
         {
             public string day { get; set; }
-            public int income { get; set; }
-            public int expense { get; set; }
+            public decimal income { get; set; }
+            public decimal expense { get; set; }
         }
     }
 }

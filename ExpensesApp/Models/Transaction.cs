@@ -15,8 +15,8 @@ namespace ExpensesApp.Models
         [Range(1, int.MaxValue, ErrorMessage = "Select a category.")]
         public int CategoryId { get; set; }
         public Category? Category { get; set; }
-        [Range(1, int.MaxValue, ErrorMessage = "Amount should be greater than 0.")]
-        public int Amount { get; set; }
+        [Range(0.01, double.MaxValue, ErrorMessage = "Amount should be greater than 0.")]
+        public decimal Amount { get; set; }
         [Column(TypeName = "nvarchar(75)")]
         public string? Description { get; set; }
 
@@ -39,7 +39,7 @@ namespace ExpensesApp.Models
         {
             get
             {
-                return ((Category == null || Category.Type == "Expense")? "- " : "+ ") + Amount.ToString("'€'0");
+                return ((Category == null || Category.Type == "Expense")? "- " : "+ ") + string.Format("€{0:F2}", Math.Abs(Amount));
             }
         }
     }
